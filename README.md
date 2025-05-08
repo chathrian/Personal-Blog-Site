@@ -36,7 +36,27 @@ Follow these steps to set up the project locally:
    ```bash
    git clone https://github.com/your-username/your-repo-name.git
    cd your-repo-name
-   
+
 2. **Install dependencies:**
-```bash
+   ```bash
    npm install
+      
+3. **Set up environment variables:**
+
+     Create a .env.local file in the root directory and add:
+
+    ```env
+    MONGODB_URI=your_mongodb_connection_string
+    CLOUDINARY_CLOUD_NAME=your_cloud_name
+    CLOUDINARY_API_KEY=your_api_key
+    CLOUDINARY_API_SECRET=your_api_secret
+    JWT_SECRET=your_jwt_secret
+
+4. **Run the development server:**
+    ```bash
+    npm run dev
+
+5. **Open the app in your browser:**
+    Visit: http://localhost:3000
+
+
