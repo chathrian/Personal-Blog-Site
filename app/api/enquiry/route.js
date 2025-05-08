@@ -17,7 +17,7 @@ export async function POST(req) {
 export async function GET(req) {
   try {
     await connectMongo();
-    const enquiryData = await EnquiryModel.find({});
+    const enquiryData = await EnquiryModel.find({}).sort({ created_at: -1 });;
     return Response.json(enquiryData);
   } catch (error) {
     return Response.json({ message: error.message });

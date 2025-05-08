@@ -4,7 +4,7 @@ import { FiEdit, FiTrash2 } from 'react-icons/fi';
 const DataTable = ({ data, onEdit, onDelete }) => {
     console.log("DataTable props:", { data, onEdit, onDelete }); 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+    <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm mb-20">
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>

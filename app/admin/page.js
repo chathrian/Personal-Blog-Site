@@ -6,6 +6,7 @@ import Head from "next/head";
 import PopupForm from "@/components/popupForm";
 import DataTable from "@/components/dataTable";
 import EnquiryTable from "@/components/enquiryTable"; 
+import { ToastContainer, toast } from "react-toastify";
 
 export default function Home() {
   const router = useRouter();
@@ -17,14 +18,56 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState("blogs");
 
   useEffect(() => {
-    fetch(process.env.NEXT_PUBLIC_API_URL + "/posts")
-      .then((res) => res.json())
-      .then((res) => setBlogs(res));
-
-    fetch(process.env.NEXT_PUBLIC_API_URL + "/enquiry")
-      .then((res) => res.json())
-      .then((res) => setEnquiries(res));
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+  
+        const [blogRes, enquiryRes] = await Promise.all([
+          fetch(process.env.NEXT_PUBLIC_API_URL + "/posts"),
+          fetch(process.env.NEXT_PUBLIC_API_URL + "/enquiry"),
+        ]);
+  
+        const [blogsData, enquiriesData] = await Promise.all([
+          blogRes.json(),
+          enquiryRes.json(),
+        ]);
+  
+        setBlogs(blogsData);
+        setEnquiries(enquiriesData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        toast.error("Failed to load data.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchData();
   }, []);
+
+  useEffect(() => {
+    // Log all cookies to see if the token is present
+    console.log("All cookies:", document.cookie);
+
+    // Get token from cookies
+    const token = getCookie('token');
+    console.log("Token found:", token);
+
+    if (!token) {
+      console.log("No token found, redirecting to login...");
+      router.push('/login'); // Redirect to login page if no token
+    }
+  }, []);
+
+  // Utility function to read cookies
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      return parts.pop().split(';').shift();
+    }
+    return null;
+  }
 
   const handleAddBlog = () => {
     setCurrentBlog(null);
@@ -36,46 +79,47 @@ export default function Home() {
     setCurrentBlog(blog);
     setShowPopup(true);
   };
-
+  
   const handleDeleteBlog = async (blog) => {
     if (confirm("Are you sure you want to delete this blog?")) {
       try {
+        const res = await fetch(`/api/posts?id=${blog.id}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
         // Replace with actual API call
         setBlogs(blogs.filter((b) => b.id !== blog.id));
+        toast.success("Post Deleted successfully")
       } catch (error) {
         console.error("Error deleting blog:", error);
       }
     }
   };
 
-  const handleSubmitBlog = async (formData) => {
+  const handleSubmitBlog = async (newOrUpdatedBlog) => {
     try {
       if (currentBlog) {
-        // Update existing blog
-        setBlogs(
-          blogs.map((blog) =>
-            blog.id === currentBlog.id
-              ? { ...formData, id: currentBlog.id }
-              : blog
+        // Replace updated blog
+        setBlogs((prevBlogs) =>
+          prevBlogs.map((b) =>
+            b._id === newOrUpdatedBlog._id ? newOrUpdatedBlog : b
           )
         );
       } else {
         // Add new blog
-        const newBlog = {
-          ...formData,
-          id: Math.max(...blogs.map((b) => b.id), 0) + 1, // Generate new ID
-        };
-        setBlogs([...blogs, newBlog]);
+        setBlogs((prevBlogs) => [newOrUpdatedBlog, ...prevBlogs]);
       }
       setShowPopup(false);
+      setCurrentBlog(null);
     } catch (error) {
-      console.error("Error saving blog:", error);
+      console.error("Error updating blog list:", error);
     }
   };
+  
 
-  const handleLogout = () => {
-    localStorage.removeItem("authToken");
-    router.push("/login");
+  const handleLogout = async () => {
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    router.push('/login');
   };
 
   return (
@@ -142,11 +186,13 @@ export default function Home() {
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                   </div>
                 ) : (
+                  <div>
                   <DataTable
                     data={blogs}
                     onEdit={handleEditBlog}
                     onDelete={handleDeleteBlog}
                   />
+                  </div>
                 )}
               </>
             )}
@@ -169,6 +215,7 @@ export default function Home() {
           />
         )}
       </div>
+            <ToastContainer position="top-right" autoClose={3000} />
     </>
   );
 }

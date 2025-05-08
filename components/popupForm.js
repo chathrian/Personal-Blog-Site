@@ -1,4 +1,7 @@
+"use client"
+
 import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
 
 const PopupForm = ({ onClose, onSubmit, initialData }) => {
   const [stateData, setStateData] = useState({
@@ -9,6 +12,7 @@ const PopupForm = ({ onClose, onSubmit, initialData }) => {
       ? initialData.created_at
       : new Date().toISOString().split("T")[0],
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (initialData) {
@@ -42,47 +46,46 @@ const PopupForm = ({ onClose, onSubmit, initialData }) => {
 
   async function handleSubmit(event) {
     event.preventDefault();
-  
+    setIsSubmitting(true);
     const formData = new FormData();
     formData.append("title", stateData.title);
     formData.append("description", stateData.description);
     formData.append("date", stateData.date);
-    if (stateData.image) {
-      formData.append("image", stateData.image); // the actual File
+  
+    const isEdit = Boolean(initialData && initialData._id);
+  
+    if (isEdit) {
+      formData.append("id", initialData._id);
+    }
+  
+    if (stateData.image && typeof stateData.image !== "string") {
+      // Append only if it's a new file
+      formData.append("image", stateData.image);
     }
   
     try {
-      const response = await fetch("http://localhost:3000/api/posts", {
-        method: "POST",
+      const response = await fetch("/api/posts", {
+        method: isEdit ? "PUT" : "POST",
         body: formData,
       });
   
+      const result = await response.json();
+  
       if (!response.ok) {
-        let errorMessage = "An unknown error occurred";
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorMessage;
-        } catch {
-          // JSON parsing failed
-        }
-        throw new Error(errorMessage);
+        throw new Error(result.error || "Something went wrong");
       }
   
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        const result = await response.json();
-        console.log(result.message);
-        alert("Post submitted successfully!");
-      } else {
-        alert("Post submitted successfully!");
-      }
+      toast.success(isEdit ? "Post updated successfully!" : "Post added successfully!");
+      if (onSubmit) onSubmit(result.post);
+      onClose(); // Close modal after success
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert(`Error: ${error.message}`);
+      console.error("Submit Error:", error);
+      toast.error("Error: " + error.message);
+    }finally{
+      setIsSubmitting(false);
     }
   }
-  
-  
+
 
   return (
     <div className="fixed inset-0 backdrop-blur-xs flex items-center justify-center z-50">
@@ -187,14 +190,27 @@ const PopupForm = ({ onClose, onSubmit, initialData }) => {
               Cancel
             </button>
             <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              Submit
-            </button>
+  type="submit"
+  disabled={isSubmitting}
+  className={`px-4 py-2 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+    isSubmitting
+      ? "bg-blue-300 cursor-not-allowed"
+      : "bg-blue-500 hover:bg-blue-600 focus:ring-blue-500"
+  }`}
+>
+  {isSubmitting
+    ? initialData
+      ? "Updating..."
+      : "Adding..."
+    : initialData
+    ? "Update"
+    : "Add"}
+</button>
+
           </div>
         </form>
       </div>
+      <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
 };

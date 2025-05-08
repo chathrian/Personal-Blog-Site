@@ -1,5 +1,5 @@
-"use client"
 
+"use client"
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -14,41 +14,52 @@ const SimpleLogin = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setCredentials(prev => ({
+    setCredentials((prev) => ({
       ...prev,
       [name]: value
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); // Clear previous errors
-    
-    // Simple validation
-    if (!credentials.username.trim() || !credentials.password.trim()) {
-      setError('Please enter both username and password');
-      return;
+    setIsLoading(true);  // Set loading to true while fetching
+
+    const { username, password } = credentials;
+    const response = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
+    console.log('response', response);
+    const data = await response.json();
+
+    if (response.ok) {
+      // Set the token in sessionStorage or cookies if required
+      sessionStorage.setItem('token', data.token);  // You can also use cookies here
+      console.log(data.message);
+
+      // Redirect to /admin after successful login
+      router.push('/admin');
+    } else {
+      setError(data.message);
     }
 
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      if (credentials.username === 'admin' && credentials.password === 'admin123') {
-        // alert('Login successful!');
-        router.push('/admin');
-      } else {
-        setError('Invalid username or password');
-      }
-      setIsLoading(false);
-    }, 1000);
+    setIsLoading(false);  // Reset loading state
   };
 
+  // Clear error after 3 seconds
+  setTimeout(() => {
+    setError('');
+  }, 3000);
+
   return (
-    <div className=" flex items-center justify-center bg-gray-100" style={{ height: '85vh' }}>
+    <div className="flex items-center justify-center bg-gray-100" style={{ height: '85vh' }}>
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h1 className="text-2xl font-bold text-center mb-6">Login</h1>
-        
+
         {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
             {error}
