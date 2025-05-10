@@ -20,7 +20,20 @@
 }
 
 body {
-  background: var(--background);
+  /* background: var(--background); */
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+
+  background-image: url('/images/bg.png'); 
+  background-size: cover;
+  background-position: center;
+}
+.bg-vertical-reverse {
+  background-image: url('/images/bg.png'); /* Correctly point to the image */
+  background-repeat: repeat-y; /* Repeat vertically */
+  background-position: bottom; /* Start from the bottom */
+  transform: scaleY(-1); /* Flip the image vertically */
+  background-size: auto; /* Adjust the size of the background image */
+  height: 500px; /* Optional: Set the height to full viewport */
+  width: 100%; /* Optional: Set the width to 100% */
 }

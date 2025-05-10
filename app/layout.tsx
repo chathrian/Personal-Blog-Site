@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google"
+import { Geist, Geist_Mono, Rock_Salt } from "next/font/google"
 import "./globals.css";
 import Header from "../components/header"
 import Footer from "../components/footer"
@@ -11,6 +11,11 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const rockSalt = Rock_Salt({
+  weight: '400',
   subsets: ["latin"],
 });
 
@@ -26,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className=".bg-vertical-reverse bg-fixed">
         <Header/>
         {children}
         <Footer/>
