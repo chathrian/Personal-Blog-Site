@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🌐 Personal Blog Site
 
-## Getting Started
+A full-stack **Personal Blog Site** with an admin panel, login authentication, blog management, and a user-friendly UI built with **Next.js**, **Tailwind CSS**, **MongoDB**, **Cloudinary**, and **JWT**.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Tech Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)
+![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=for-the-badge&logo=cloudinary&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens&logoColor=white)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📌 Features
 
-## Learn More
+### 🧑‍💻 Admin Panel
+- 🔐 Login authentication and authorization
+- ➕ Add blogs with image, title, and description
+- ✏️ Edit and delete existing blogs
+- 📥 View enquiries submitted through the form
 
-To learn more about Next.js, take a look at the following resources:
+### 🧑‍🏫 User Interface
+- 🏠 Home page listing all blogs
+- 🔍 Search blogs by title or related keywords
+- 📄 Detailed blog view page
+- 📨 Enquiry form for visitors
+  
+## 🛠️ Installation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Follow these steps to set up the project locally:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/your-repo-name.git
+   cd your-repo-name
 
-## Deploy on Vercel
+2. **Install dependencies:**
+   ```bash
+   npm install
+      
+3. **Set up environment variables:**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+     Create a .env.local file in the root directory and add:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    ```env
+    MONGODB_URI=your_mongodb_connection_string
+    CLOUDINARY_CLOUD_NAME=your_cloud_name
+    CLOUDINARY_API_KEY=your_api_key
+    CLOUDINARY_API_SECRET=your_api_secret
+    JWT_SECRET=your_jwt_secret
+
+4. **Run the development server:**
+    ```bash
+    npm run dev
+
+5. **Open the app in your browser:**
+    Visit: http://localhost:3000
+
+
